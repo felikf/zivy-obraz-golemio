@@ -45,6 +45,6 @@ chmod +x /etc/rc.local`
 #!/bin/sh -e
 export TOKEN=XXX
 export IMPORT_KEY=YYY
-/usr/bin/node /home/felix/zivy-obraz-golemio/src/index.mjs > /tmp/log.txt
+/usr/bin/node /tmp/zivy-obraz-golemio/src/index.mjs > /tmp/log.txt
 exit 0
 ```
