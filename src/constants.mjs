@@ -1,0 +1,1 @@
+export const JESENICE_PLATFORM_B = 'U1330Z2';

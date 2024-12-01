@@ -30,21 +30,30 @@ apt get update
 apt install nodejs
 apt install npm
 apt install git
+git clone https://github.com/felikf/zivy-obraz-golemio.git
 ```
 
 ### Configure
 
 ```bash
+sudo touch /etc/rc.local 
 sudo nano /etc/rc.local
-chmod +x /etc/rc.local`
+sudo chmod +x /etc/rc.local
 ```
 
 ### /etc/rc.local
 
 ```bash
 #!/bin/sh -e
+
+# wait for network services to start
+sleep 60
+
+# setup environment variables
 export TOKEN=XXX
 export IMPORT_KEY=YYY
-/usr/bin/node /tmp/zivy-obraz-golemio/src/index.mjs > /tmp/log.txt
+  
+# run the script
+/usr/bin/node /home/user/zivy-obraz-golemio/src/index.mjs > /tmp/log.txt
 exit 0
 ```

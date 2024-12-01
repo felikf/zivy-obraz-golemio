@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { getLiveScreenImportKey } from './util.mjs';
 
-const IMPORT_KEY = process.env.IMPORT_KEY;
-
-const OUTPUT_URL_BASE = `http://in.zivyobraz.eu/?import_key=${IMPORT_KEY}`;
+function prepareUrl() {
+  return `http://in.zivyobraz.eu/?import_key=${getLiveScreenImportKey()}`;
+}
 
 export function uploadData(queryString) {
-  const finalUrl = `${OUTPUT_URL_BASE}&${queryString}`;
+  const finalUrl = `${prepareUrl()}&${queryString}`;
   return from(axios.post(finalUrl)).pipe(map(response => response.data));
 }
