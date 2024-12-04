@@ -26,33 +26,41 @@ export const fetchDepartureData = (platform, minutesBefore) => {
   );
 };
 
+function mapOneDeparture(departure) {
+  {
+    const scheduled = formatTime(departure.arrival_timestamp.scheduled);
+    const delayMinutes = departure.delay.minutes || 'včas';
+    const routeShortName = departure.route.short_name;
+
+    return {
+      scheduled,
+      delayMinutes,
+      routeShortName
+    };
+  }
+}
+
+function toQueryString({ scheduled, delayMinutes, routeShortName }, index) {
+  let s = [
+    { name: 'scheduled', value: scheduled },
+    { name: 'delay_minutes', value: delayMinutes },
+    { name: 'route_short_name', value: routeShortName }
+  ]
+    .map(item => `c_${index}_${item.name}=${encodeURIComponent(item.value)}`)
+    .join('&');
+
+  return s;
+}
+
 // Function to extract and map the required data to URL query parameters
 const mapDepartureData = data => {
   if (!data.departures || data.departures.length === 0) {
     return '';
   }
-
+  let index = 1;
   return data.departures
-    .map(departure => {
-      const scheduled = formatTime(departure.arrival_timestamp.scheduled);
-      const delayMinutes = departure.delay.minutes || '';
-      const routeShortName = departure.route.short_name;
-
-      return {
-        scheduled,
-        delayMinutes,
-        routeShortName
-      };
-    })
+    .map(departure => mapOneDeparture(departure))
     .filter(item => ['332', '339', '335', '337', '334'].some(linkName => item.routeShortName.indexOf(linkName) > -1))
-    .map(({ scheduled, delayMinutes, routeShortName }) =>
-      [
-        { name: 'scheduled', value: scheduled },
-        { name: 'delay_minutes', value: delayMinutes },
-        { name: 'route_short_name', value: routeShortName }
-      ]
-        .map((item, index) => `c_${index + 1}_${item.name}=${encodeURIComponent(item.value)}`)
-        .join('&')
-    )
+    .map(data => toQueryString(data, index++))
     .join('&');
 };
