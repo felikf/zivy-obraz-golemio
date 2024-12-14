@@ -5,8 +5,8 @@
   "main": "src/traffic-sync.mjs",
   "scripts": {
     "copy": "scp src/traffic-sync.mjs felix@192.168.88.63:/home/felix/zivy-obraz-golemio",
-    "start:traffic-sync": " node src/traffic-sync.mjs > log.txt &2>1 &",
-    "start:proverb-sync": " node src/proverb-sync.mjs > log.txt &2>1 &"
+    "start:traffic-sync": "node src/traffic-sync.mjs",
+    "start:proverb-sync": "node src/proverb-sync.mjs"
   },
   "author": "",
   "license": "ISC",
