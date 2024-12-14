@@ -34,3 +34,15 @@ timer(0, 10 * intervalMs)
     next: () => console.log('Proverb successfully posted.'),
     error: error => console.error('Error occurred:', error)
   });
+
+process.on('uncaughtException', err => {
+  console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('exit', code => {
+  console.log(`Process exiting with code: ${code}`);
+});
