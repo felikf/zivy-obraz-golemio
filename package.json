@@ -1,11 +1,12 @@
 {
-  "name": "golemio",
+  "name": "traffic-sync",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/traffic-sync.mjs",
   "scripts": {
-    "copy": "scp src/index.mjs felix@192.168.88.63:/home/felix/zivy-obraz-golemio",
-    "start": "node src/index.mjs"
+    "copy": "scp src/traffic-sync.mjs felix@192.168.88.63:/home/felix/zivy-obraz-golemio",
+    "start:traffic-sync": " node src/traffic-sync.mjs > log.txt &2>1 &",
+    "start:proverb-sync": " node src/proverb-sync.mjs > log.txt &2>1 &"
   },
   "author": "",
   "license": "ISC",
