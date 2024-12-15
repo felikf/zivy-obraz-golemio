@@ -22,8 +22,10 @@ export IMPORT_KEY=YYY
 
 ## Simple start
 
+First argument is the stop ID, second argument is a fetch interval in minutes.
+
 ```bash
-  node src/traffic-sync.mjs
+  node src/traffic-sync.mjs U1330Z1 5
 ```
 
 ## Raspberry Pi
@@ -38,7 +40,28 @@ apt install git
 git clone https://github.com/felikf/zivy-obraz-golemio.git
 ```
 
-### Configure
+### Start with m2
+
+[PM2](https://www.npmjs.com/package/pm2) is a production process manager for Node.js.
+
+> Your app is now daemonized, monitored and kept alive forever.
+
+```shell
+npm install -g pm2
+pm2 start src/traffic-sync.mjs U1330Z1 5 --name traffic-sync
+pm2 start src/proverb-sync.mjs --name proverb-sync
+```
+
+```shell
+pm2 logs proverb-sync
+pm2 logs traffic-sync
+```
+
+```shell
+pm2 list
+```
+
+### Start on boot
 
 ```bash
 sudo touch /etc/rc.local 
@@ -61,25 +84,4 @@ export IMPORT_KEY=YYY
 # run the script
 /usr/bin/node /home/user/zivy-obraz-golemio/src/traffic-sync.mjs > /tmp/log.txt
 exit 0
-```
-
-### Start using m2
-
-[PM2](https://www.npmjs.com/package/pm2) is a production process manager for Node.js.
-
-> Your app is now daemonized, monitored and kept alive forever.
-
-```shell
-npm install -g pm2
-pm2 start src/traffic-sync.mjs --name traffic-sync
-pm2 start src/proverb-sync.mjs --name proverb-sync
-```
-
-```shell
-pm2 logs proverb-sync
-pm2 logs traffic-sync
-```
-
-```shell
-pm2 list
 ```
