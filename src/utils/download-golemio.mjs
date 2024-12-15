@@ -34,11 +34,13 @@ function mapOneDeparture(departure) {
     const scheduled = formatTime(departure.arrival_timestamp.scheduled);
     const delayMinutes = departure.delay.minutes || 'včas';
     const routeShortName = departure.route.short_name;
+    const headsign = departure.trip.headsign;
 
     return {
       scheduled,
       delayMinutes,
-      routeShortName
+      routeShortName,
+      headsign
     };
   }
 }
@@ -58,11 +60,12 @@ function mapDepartureData(data, prefix) {
   );
 }
 
-function toQueryString({ scheduled, delayMinutes, routeShortName }, index, prefix) {
+function toQueryString({ scheduled, delayMinutes, routeShortName, headsign }, index, prefix) {
   return [
     { name: 'scheduled', value: scheduled },
     { name: 'delay_minutes', value: delayMinutes },
-    { name: 'route_short_name', value: routeShortName }
+    { name: 'route_short_name', value: routeShortName },
+    { name: 'headsign', value: headsign }
   ]
     .map(item => `${prefix}_${index}_${item.name}=${encodeURIComponent(item.value)}`)
     .join('&');

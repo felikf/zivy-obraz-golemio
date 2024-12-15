@@ -237,14 +237,18 @@ const proverbs = [
   }
 ];
 
-function wrap(proverb, width = 30) {
-  const regex = new RegExp(`.{1,${width}}`, 'g');
+function wrap(proverb, wrapLength = 30) {
+  const regex = new RegExp(`.{1,${wrapLength}}`, 'g');
   return proverb.match(regex).join('\n');
 }
 
-export function getRandomProverb() {
+export function getRandomProverb(wrapLength) {
   try {
-    return wrap(proverbs[Math.floor(Math.random() * proverbs.length)].proverb);
+    let proverb = proverbs[Math.floor(Math.random() * proverbs.length)];
+    return {
+      ...proverb,
+      proverb: wrapLength ? wrap(proverb.proverb, wrapLength) : proverb.proverb
+    };
   } catch (error) {
     return 'Chyba při získávání přísloví.';
   }
