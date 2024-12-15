@@ -1,6 +1,6 @@
 # Description
 
-Javascript code for synchronization between "Živý obraz" and Golemio API (Public Transport API in Prague).
+JavaScript code for synchronization between "Živý obraz" and Golemio API (Public Transport API in Prague).
 
 The code will fetch data from Golemio API and import them to "Živý obraz" using the API.
 
@@ -22,7 +22,7 @@ export IMPORT_KEY=YYY
 
 ## Simple start
 
-First argument is the stop ID, second argument is a fetch interval in minutes.
+The first argument is the stop ID, the second argument is a fetch interval in minutes.
 
 ```bash
   node src/traffic-sync.mjs U1330Z1 5
