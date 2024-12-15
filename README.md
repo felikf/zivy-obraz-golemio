@@ -48,7 +48,8 @@ git clone https://github.com/felikf/zivy-obraz-golemio.git
 
 ```shell
 npm install -g pm2
-pm2 start src/traffic-sync.mjs U1330Z1 5 --name traffic-sync
+pm2 start src/traffic-sync.mjs --node-args="U1330Z1"  --name traffic-sync-U1330Z1
+pm2 start src/traffic-sync.mjs --node-args="U1330Z2"  --name traffic-sync-U1330Z2
 pm2 start src/proverb-sync.mjs --name proverb-sync
 ```
 
