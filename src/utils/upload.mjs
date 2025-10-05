@@ -9,5 +9,6 @@ function prepareUrl() {
 
 export function uploadData(queryString) {
   const finalUrl = `${prepareUrl()}&${queryString}`;
+  console.log(`uploadData(): finalUrl: ${finalUrl}`);
   return from(axios.post(finalUrl)).pipe(map(response => response.data));
 }
