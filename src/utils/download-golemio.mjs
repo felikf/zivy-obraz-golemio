@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { from } from 'rxjs';
+import { from, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { formatDate, formatTime, getGolemioToken } from './util.mjs';
@@ -25,7 +25,8 @@ export const fetchDepartureData = (platform, minutesBefore) => {
     map(
       response =>
         `${mapDepartureData(response.data, platform)}&fetchedTimestamp=${encodeURIComponent(formatDate(new Date()))}`
-    )
+    ),
+    tap(queryString => console.log(`Fetched data: queryString: ${queryString}`))
   );
 };
 
