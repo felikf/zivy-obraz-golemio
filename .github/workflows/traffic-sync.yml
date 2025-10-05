@@ -16,7 +16,6 @@ jobs:
     timeout-minutes: 3
 
     env:
-      INTERVAL_MINUTES: "10"
       STOP_ID: U1330Z2
       TOKEN: ${{ secrets.GOLEMIO_TOKEN }}
       IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
