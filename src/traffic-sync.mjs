@@ -10,17 +10,15 @@ const stopId = process.argv[2] || JESENICE_PLATFORM_B;
 const intervalTime = parseInt(process.argv[3]) || 5;
 const intervalMs = intervalTime * 60 * 1000;
 
-console.log(`Starting: timetable fetch interval ${intervalMs / 1000 / 60}m, stop ID: ${stopId}`);
+console.log(`Fetching data: ${formatDate(new Date())}`);
 
-// Set up an interval to fetch data every n minute
-timer(0, intervalMs)
-  .pipe(
-    tap(() => console.log(`Fetching data: ${formatDate(new Date())}`)),
-    switchMap(() => fetchDepartureData(stopId, -9, stopId)),
-    filter(queryTimeTable => queryTimeTable.length > 0),
-    switchMap(queryTimeTable => uploadData(queryTimeTable))
-  )
-  .subscribe({
-    next: () => console.log('Timetable successfully posted.'),
-    error: error => console.error('Error occurred:', error)
-  });
+fetchDepartureData(stopId, -9, stopId).then(queryTimeTable => {
+  if (queryTimeTable.length > 0) {
+  uploadData(queryTimeTable)
+}
+console.log('Timetable successfully posted.')
+}).catchError(err => {
+  console.error('Error fetching or uploading data:', err);
+});
+
+
