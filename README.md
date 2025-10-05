@@ -22,9 +22,9 @@ export IMPORT_KEY=YYY
 
 ## Simple start
 
-The first argument is the stop ID, the second argument is a fetch interval in minutes.
+The first argument is the stop ID.
 
 ```bash
-  node src/traffic-sync.mjs U1330Z1 5
+  node src/traffic-sync.mjs U1330Z1
 ```
 

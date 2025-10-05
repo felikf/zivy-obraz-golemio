@@ -39,4 +39,4 @@ jobs:
 
       - name: Run traffic-sync
         run: |
-          node src/traffic-sync.mjs "$STOP_ID" "$INTERVAL_MINUTES"
+          node src/traffic-sync.mjs "$STOP_ID"
