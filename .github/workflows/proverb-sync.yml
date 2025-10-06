@@ -2,8 +2,8 @@ name: Traffic sync (Živý obraz ⇄ Static proverbs)
 
 on:
   schedule:
-    - cron: "0 6 * * * *"   # každých 10 minut (UTC)
-  workflow_dispatch:         # možnost spustit ručně
+    - cron: "0 6 * * *"
+  workflow_dispatch:
 
 jobs:
   run:

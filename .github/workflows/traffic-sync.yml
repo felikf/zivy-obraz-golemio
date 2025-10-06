@@ -2,8 +2,8 @@ name: Traffic sync (Živý obraz ⇄ Golemio)
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # každých 10 minut (UTC)
-  workflow_dispatch:         # možnost spustit ručně
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
 
 jobs:
   run:
