@@ -1,0 +1,40 @@
+name: Traffic sync (Živý obraz ⇄ Golemio)
+
+on:
+  schedule:
+    - cron: "0 6 * * * *"   # každých 10 minut (UTC)
+  workflow_dispatch:         # možnost spustit ručně
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    concurrency:
+      group: traffic-sync
+      cancel-in-progress: false
+    timeout-minutes: 3
+
+    env:
+      TOKEN: ${{ secrets.GOLEMIO_TOKEN }}
+      IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+
+      - name: Install dependencies (if any)
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+          fi
+
+      - name: Run traffic-sync
+        run: |
+          node src/proverb-sync.mjs
