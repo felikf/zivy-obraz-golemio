@@ -1,4 +1,4 @@
-name: Traffic sync (Živý obraz ⇄ Golemio)
+name: Traffic sync (Živý obraz ⇄ Static proverbs)
 
 on:
   schedule:
