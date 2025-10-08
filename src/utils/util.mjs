@@ -9,10 +9,10 @@ export function formatDate(date) {
 }
 
 export function formatTime(timeStamp) {
-  return new Date(timeStamp).toLocaleTimeString('cs-CZ', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  return new Intl.DateTimeFormat('cs-CZ', {
+    dateStyle: 'short',
+    timeStyle: 'short'
+  }).format(timeStamp);
 }
 
 export function getGolemioToken() {
