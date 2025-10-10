@@ -12,7 +12,7 @@ export function formatTime(timeStamp) {
   return new Intl.DateTimeFormat('cs-CZ', {
     dateStyle: 'short',
     timeStyle: 'short'
-  }).format(timeStamp);
+  }).format(new Date(timeStamp));
 }
 
 export function getGolemioToken() {
