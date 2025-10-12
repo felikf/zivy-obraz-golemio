@@ -1,8 +1,12 @@
 # Description
 
-JavaScript code for synchronization between "Živý obraz" and Golemio API (Public Transport API in Prague).
+This is the JavaScript code that synchronises 'Živý Obraz' with the Golemio API (the public transport API in Prague).
 
-The code will fetch data from Golemio API and import them to "Živý obraz" using the API.
+The code fetches data from the Golemio API and imports it to 'Živý Obraz' via the API.
+
+Synchronisation is achieved via the workflow `.github/workflows/traffic-sync.yml`.
+
+This workflow is dispatched by a cron job every 10 minutes to run a script that fetches data for a specific stop ID.
 
 ## Initialisation
 
@@ -10,14 +14,16 @@ The code will fetch data from Golemio API and import them to "Živý obraz" usin
 npm install
 ```
 
-Set environment variables:
+Set environment secrets:
+Settings -> Secrets and variables -> Actions -> New repository secret
 
-* `TOKEN` - [Golemio API token](https://api.golemio.cz/docs/openapi/)
-* `IMPORT_KEY` - [Živý obraz](https://zivyobraz.eu/?page=muj-ucet&hodnoty=1) import key
+* `GOLEMIO_TOKEN` - [Golemio API token](https://api.golemio.cz/docs/openapi/)
+* `ZIVY_OBRAZ_IMPORT_KEY` - [Živý obraz](https://zivyobraz.eu/?page=muj-ucet&hodnoty=1) import key
 
+Toi run the script locally, set the environment variables in your shell:
 ```shell
-export TOKEN=XXX
-export IMPORT_KEY=YYY
+export TOKEN=<token>
+export IMPORT_KEY=<import_key>
 ```
 
 ## Simple start
