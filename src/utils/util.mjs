@@ -1,7 +1,8 @@
 export function formatDate(timeStamp) {
   return new Intl.DateTimeFormat('cs-CZ', {
     dateStyle: 'short',
-    timeStyle: 'short'
+    timeStyle: 'short',
+    timeZone: 'Europe/Prague'
   }).format(timeStamp);
 }
 

@@ -33,7 +33,7 @@ export const fetchDepartureData = (platform, minutesBefore) => {
 function mapOneDeparture(departure) {
   {
     const scheduled = formatTime(departure.arrival_timestamp.scheduled);
-    const delayMinutes = departure.delay.minutes || 'včas';
+    const delayMinutes = departure.delay.minutes;
     const routeShortName = departure.route.short_name;
     const headsign = departure.trip.headsign;
 
