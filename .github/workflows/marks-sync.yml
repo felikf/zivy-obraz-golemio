@@ -1,4 +1,4 @@
-name: Marks sync (Golemio ⇄ Bakaláři)
+name: Marks sync (Bakaláři ⇄ Živý obraz)
 
 on:
   schedule:
@@ -38,4 +38,4 @@ jobs:
 
       - name: Run marks-sync
         run: |
-          node src/marks-sync.mjs "$STOP_ID"
+          node src/marks-sync.mjs
