@@ -1,4 +1,4 @@
-name: Traffic sync (Živý obraz ⇄ Static proverbs)
+name: Traffic sync (Static proverbs ⇄ Živý obraz)
 
 on:
   schedule:
@@ -16,7 +16,6 @@ jobs:
     timeout-minutes: 3
 
     env:
-      TOKEN: ${{ secrets.GOLEMIO_TOKEN }}
       IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
 
     steps:

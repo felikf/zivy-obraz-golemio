@@ -1,4 +1,4 @@
-name: Traffic sync (Živý obraz ⇄ Golemio)
+name: Marks sync (Golemio ⇄ Bakaláři)
 
 on:
   schedule:
@@ -36,6 +36,6 @@ jobs:
             npm ci
           fi
 
-      - name: Run traffic-sync
+      - name: Run marks-sync
         run: |
           node src/marks-sync.mjs "$STOP_ID"
