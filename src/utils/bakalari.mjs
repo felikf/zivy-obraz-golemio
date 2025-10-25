@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { from } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 function getBaseUrl() {
   const baseUrl = process.env.BAKALARI_BASE_URL;
@@ -49,7 +50,7 @@ async function fetchAccessToken() {
 }
 
 function extractSubjectName(subject) {
-  return subject?.Subject?.Name ?? subject?.Subject?.Abbrev ?? subject?.Name ?? subject?.Abbrev ?? 'Neznámý předmět';
+  return subject?.Subject?.Abbrev ?? subject?.Subject?.Name ?? subject?.Name ?? subject?.Abbrev ?? 'Neznámý předmět';
 }
 
 function extractMarkValue(mark) {
@@ -80,10 +81,9 @@ function isMarkWithinRange(mark, fromDate, toDate) {
 export function fetchSubjectMarks(fromDate, toDate) {
   const baseUrl = getBaseUrl();
 
-  return from(
-    (async () => {
-      const token = await fetchAccessToken();
-      const response = await axios.get(`${baseUrl}/api/3/marks`, {
+  return from(fetchAccessToken()).pipe(
+    switchMap(token =>
+      axios.get(`${baseUrl}/api/3/marks`, {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -91,11 +91,11 @@ export function fetchSubjectMarks(fromDate, toDate) {
           from: toIsoDate(fromDate),
           to: toIsoDate(toDate)
         }
-      });
-
-      const subjects = response.data?.Subjects ?? response.data?.subjects ?? [];
-
-      return subjects
+      })
+    ),
+    map(response => response.data?.Subjects ?? response.data?.subjects ?? []),
+    map(subjects =>
+      subjects
         .map(subject => {
           const subjectName = extractSubjectName(subject);
           const marks = (subject?.Marks ?? subject?.marks ?? [])
@@ -105,7 +105,7 @@ export function fetchSubjectMarks(fromDate, toDate) {
 
           return { subjectName, marks };
         })
-        .filter(subject => subject.marks.length > 0);
-    })()
+        .filter(subject => subject.marks.length > 0)
+    )
   );
 }

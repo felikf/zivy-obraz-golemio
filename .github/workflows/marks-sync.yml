@@ -2,7 +2,7 @@ name: Traffic sync (Živý obraz ⇄ Golemio)
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -11,14 +11,14 @@ jobs:
     permissions:
       contents: read
     concurrency:
-      group: traffic-sync
+      group: marks-sync
       cancel-in-progress: false
     timeout-minutes: 3
 
     env:
-      STOP_ID: ${{ secrets.GOLEMIO_STOP_ID }}
-      TOKEN: ${{ secrets.GOLEMIO_TOKEN }}
-      IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
+      BAKALARI_BASE_URL: ${{ secrets.BAKALARI_BASE_URL }}
+      BAKALARI_USERNAME: ${{ secrets.BAKALARI_USERNAME }}
+      BAKALARI_PASSWORD: ${{ secrets.BAKALARI_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v4
@@ -38,4 +38,4 @@ jobs:
 
       - name: Run traffic-sync
         run: |
-          node src/traffic-sync.mjs "$STOP_ID"
+          node src/marks-sync.mjs "$STOP_ID"

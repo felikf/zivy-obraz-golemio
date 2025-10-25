@@ -1,2 +1,0 @@
-export const JESENICE_PLATFORM_A = 'U1330Z1';
-export const JESENICE_PLATFORM_B = 'U1330Z2';
