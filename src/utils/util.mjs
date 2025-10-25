@@ -14,6 +14,31 @@ export function formatTime(timeStamp) {
   });
 }
 
+export function startOfUtcDay(date) {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+}
+
+export function describeRelativeDay(referenceDate, targetDate) {
+  if (!(targetDate instanceof Date) || Number.isNaN(targetDate.getTime())) {
+    return 'neznámo';
+  }
+
+  const startOfReferenceDay = startOfUtcDay(referenceDate);
+  const startOfTargetDay = startOfUtcDay(targetDate);
+  const diffInDays = Math.round((startOfTargetDay - startOfReferenceDay) / (24 * 60 * 60 * 1000));
+
+  if (diffInDays <= 0) {
+    return 'dnes';
+  }
+
+  if (diffInDays === 1) {
+    return 'zítra';
+  }
+
+  const suffix = diffInDays >= 5 ? 'dní' : 'dny';
+  return `za ${diffInDays} ${suffix}`;
+}
+
 export function getGolemioToken() {
   return process.env.TOKEN;
 }

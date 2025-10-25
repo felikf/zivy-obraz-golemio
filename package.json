@@ -8,7 +8,8 @@
     "start:traffic-sync": "node src/traffic-sync.mjs",
     "start:proverb-sync": "node src/proverb-sync.mjs",
     "start:marks-sync": "node src/marks-sync.mjs",
-    "start:homeworks-sync": "node src/homeworks-sync.mjs"
+    "start:homeworks-sync": "node src/homeworks-sync.mjs",
+    "start:events-sync": "node src/events-sync.mjs"
   },
   "author": "",
   "license": "ISC",

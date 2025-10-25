@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { from } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { startOfUtcDay } from './util.mjs';
 
 function getBaseUrl() {
   const baseUrl = process.env.BAKALARI_BASE_URL;
@@ -190,6 +191,115 @@ export function fetchHomeworks(fromDate, toDate) {
   );
 }
 
-function startOfUtcDay(date) {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+export function fetchEvents(fromDate, toDate) {
+  const baseUrl = getBaseUrl();
+
+  return from(
+    (async () => {
+      const token = await fetchAccessToken();
+      const response = await axios.get(`${baseUrl}/api/3/events`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        params: {
+          from: toIsoDate(fromDate),
+          to: toIsoDate(toDate)
+        }
+      });
+
+      const events = response.data?.Events ?? response.data?.events ?? [];
+
+      return events
+        .map(event => ({
+          startDate: extractEventStartDate(event),
+          endDate: extractEventEndDate(event),
+          subjectName: extractSubjectName(event),
+          title: extractEventTitle(event),
+          description: extractEventDescription(event),
+          type: extractEventType(event)
+        }))
+        .filter(event => isEventWithinRange(event, fromDate, toDate))
+        .sort((a, b) => (a.startDate ?? 0) - (b.startDate ?? 0));
+    })()
+  );
+}
+
+function extractEventStartDate(event) {
+  const possibleDates = [event?.DateFrom, event?.Start, event?.Date, event?.From, event?.Begin, event?.Since];
+  for (const dateString of possibleDates) {
+    const parsed = parseDate(dateString);
+    if (parsed) {
+      return parsed;
+    }
+  }
+
+  return null;
+}
+
+function extractEventEndDate(event) {
+  const possibleDates = [event?.DateTo, event?.End, event?.To, event?.Finish, event?.Until];
+  for (const dateString of possibleDates) {
+    const parsed = parseDate(dateString);
+    if (parsed) {
+      return parsed;
+    }
+  }
+
+  return extractEventStartDate(event);
+}
+
+function extractEventTitle(event) {
+  const possibleTitles = [event?.Title, event?.Name, event?.Caption, event?.Description];
+  return possibleTitles.find(value => typeof value === 'string' && value.trim())?.trim() ?? 'Neznámá událost';
+}
+
+function extractEventDescription(event) {
+  const possibleDescriptions = [event?.Description, event?.Note, event?.Content, event?.Text, event?.HomeworkText];
+  return possibleDescriptions.find(value => typeof value === 'string' && value.trim())?.trim() ?? '';
+}
+
+function extractEventType(event) {
+  const type = event?.Type ?? event?.EventType ?? event?.EventKind;
+  if (typeof type === 'string' && type.trim()) {
+    return type.trim();
+  }
+
+  if (typeof type?.Name === 'string' && type.Name.trim()) {
+    return type.Name.trim();
+  }
+
+  if (typeof type?.Abbrev === 'string' && type.Abbrev.trim()) {
+    return type.Abbrev.trim();
+  }
+
+  return '';
+}
+
+function isEventWithinRange(event, fromDate, toDate) {
+  if (!event.startDate) {
+    return false;
+  }
+
+  const startOfEventDay = startOfUtcDay(event.startDate);
+  const startOfFromDay = startOfUtcDay(fromDate);
+  const startOfToDay = startOfUtcDay(toDate);
+
+  return startOfEventDay >= startOfFromDay && startOfEventDay <= startOfToDay;
+}
+
+function parseDate(dateValue) {
+  if (!dateValue) {
+    return null;
+  }
+
+  if (dateValue instanceof Date) {
+    return new Date(dateValue.getTime());
+  }
+
+  const parsed = new Date(dateValue);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed;
 }
