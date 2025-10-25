@@ -8,8 +8,6 @@ function getBaseUrl() {
     throw new Error('Missing environment variable BAKALARI_BASE_URL');
   }
 
-  console.log('baseUrl:', baseUrl.replace(/\/$/, ''));
-
   return baseUrl.replace(/\/$/, '');
 }
 

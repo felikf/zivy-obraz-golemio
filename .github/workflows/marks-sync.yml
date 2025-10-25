@@ -19,6 +19,7 @@ jobs:
       BAKALARI_BASE_URL: ${{ secrets.BAKALARI_BASE_URL }}
       BAKALARI_USERNAME: ${{ secrets.BAKALARI_USERNAME }}
       BAKALARI_PASSWORD: ${{ secrets.BAKALARI_PASSWORD }}
+      IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
 
     steps:
       - uses: actions/checkout@v4
