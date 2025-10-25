@@ -17,13 +17,20 @@ npm install
 Set environment secrets:
 Settings -> Secrets and variables -> Actions -> New repository secret
 
-* `GOLEMIO_TOKEN` - [Golemio API token](https://api.golemio.cz/docs/openapi/)
-* `ZIVY_OBRAZ_IMPORT_KEY` - [Živý obraz](https://zivyobraz.eu/?page=muj-ucet&hodnoty=1) import key
+- `GOLEMIO_TOKEN` - [Golemio API token](https://api.golemio.cz/docs/openapi/)
+- `ZIVY_OBRAZ_IMPORT_KEY` - [Živý obraz](https://zivyobraz.eu/?page=muj-ucet&hodnoty=1) import key
+- `BAKALARI_BASE_URL` - Bakaláři instance base URL (e.g. `https://bakalari.gpisnicka.cz/bakaweb`)
+- `BAKALARI_USERNAME` - Bakaláři username used for API login
+- `BAKALARI_PASSWORD` - Bakaláři password used for API login
 
-Toi run the script locally, set the environment variables in your shell:
+To run the script locally, set the environment variables in your shell:
+
 ```shell
 export TOKEN=<token>
 export IMPORT_KEY=<import_key>
+export BAKALARI_BASE_URL=<https://your-bakalari-instance/bakaweb>
+export BAKALARI_USERNAME=<username>
+export BAKALARI_PASSWORD=<password>
 ```
 
 ## Simple start
@@ -34,3 +41,8 @@ The first argument is the stop ID.
   node src/traffic-sync.mjs U1330Z1
 ```
 
+To synchronise grades from Bakaláři, run:
+
+```bash
+  node src/marks-sync.mjs
+```
