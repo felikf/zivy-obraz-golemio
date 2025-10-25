@@ -109,3 +109,86 @@ export function fetchSubjectMarks(fromDate, toDate) {
     })()
   );
 }
+
+function extractHomeworkDueDate(homework) {
+  const dateString =
+    homework?.DueDate ??
+    homework?.Deadline ??
+    homework?.Due ??
+    homework?.Date ??
+    homework?.Created ??
+    homework?.CreatedDate;
+
+  if (!dateString) {
+    return null;
+  }
+
+  const dueDate = new Date(dateString);
+  if (Number.isNaN(dueDate.getTime())) {
+    return null;
+  }
+
+  return dueDate;
+}
+
+function extractHomeworkContent(homework) {
+  const possibleContents = [
+    homework?.HomeworkText,
+    homework?.Text,
+    homework?.Description,
+    homework?.Title,
+    homework?.Content,
+    homework?.Note,
+    homework?.Name
+  ];
+
+  return possibleContents.find(value => typeof value === 'string' && value.trim())?.trim() ?? '';
+}
+
+function isHomeworkWithinRange(homework, fromDate, toDate) {
+  const dueDate = extractHomeworkDueDate(homework);
+  if (!dueDate) {
+    return false;
+  }
+
+  const startOfDueDay = startOfUtcDay(dueDate);
+  const startOfFromDay = startOfUtcDay(fromDate);
+  const startOfToDay = startOfUtcDay(toDate);
+
+  return startOfDueDay >= startOfFromDay && startOfDueDay <= startOfToDay;
+}
+
+export function fetchHomeworks(fromDate, toDate) {
+  const baseUrl = getBaseUrl();
+
+  return from(
+    (async () => {
+      const token = await fetchAccessToken();
+      const response = await axios.get(`${baseUrl}/api/3/homeworks`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        params: {
+          from: toIsoDate(fromDate),
+          to: toIsoDate(toDate)
+        }
+      });
+
+      const homeworks = response.data?.Homeworks ?? response.data?.homeworks ?? [];
+
+      return homeworks
+        .filter(homework => isHomeworkWithinRange(homework, fromDate, toDate))
+        .map(homework => ({
+          subjectName: extractSubjectName(homework),
+          dueDate: extractHomeworkDueDate(homework),
+          content: extractHomeworkContent(homework)
+        }))
+        .filter(homework => homework.dueDate)
+        .sort((a, b) => a.dueDate - b.dueDate);
+    })()
+  );
+}
+
+function startOfUtcDay(date) {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+}

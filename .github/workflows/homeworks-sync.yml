@@ -1,0 +1,42 @@
+name: Homeworks sync (Živý obraz ⇄ Bakaláři)
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    concurrency:
+      group: homeworks-sync
+      cancel-in-progress: false
+    timeout-minutes: 3
+
+    env:
+      IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
+      BAKALARI_BASE_URL: ${{ secrets.BAKALARI_BASE_URL }}
+      BAKALARI_USERNAME: ${{ secrets.BAKALARI_USERNAME }}
+      BAKALARI_PASSWORD: ${{ secrets.BAKALARI_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+
+      - name: Install dependencies (if any)
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+          fi
+
+      - name: Run homeworks-sync
+        run: |
+          node src/homeworks-sync.mjs

@@ -46,3 +46,9 @@ To synchronise grades from Bakaláři, run:
 ```bash
   node src/marks-sync.mjs
 ```
+
+To synchronise homework deadlines from Bakaláři, run:
+
+```bash
+  node src/homeworks-sync.mjs
+```
