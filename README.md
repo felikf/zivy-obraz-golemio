@@ -52,3 +52,9 @@ To synchronise homework deadlines from Bakaláři, run:
 ```bash
   node src/homeworks-sync.mjs
 ```
+
+To synchronise planned tests and school events from Bakaláři, run:
+
+```bash
+  node src/events-sync.mjs
+```

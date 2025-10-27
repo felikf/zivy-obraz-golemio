@@ -1,11 +1,10 @@
 import { map, switchMap, tap } from 'rxjs/operators';
 import { fetchHomeworks } from './utils/bakalari.mjs';
 import { uploadData } from './utils/upload.mjs';
-import { formatDate } from './utils/util.mjs';
+import { describeRelativeDay, formatDate, startOfUtcDay } from './utils/util.mjs';
 
 const now = new Date();
-const fromDate = new Date(now);
-fromDate.setUTCHours(0, 0, 0, 0);
+const fromDate = startOfUtcDay(now);
 const toDate = new Date(fromDate);
 toDate.setMonth(toDate.getMonth() + 1);
 
@@ -36,7 +35,7 @@ function buildHomeworksQueryString(homeworks, generatedAt) {
   }
 
   const lines = homeworks.slice(0, 10).map((homework, index) => {
-    const indicator = getDeadlineIndicator(generatedAt, homework.dueDate);
+    const indicator = describeRelativeDay(generatedAt, homework.dueDate);
     const subject = homework.subjectName;
     const content = (homework.content || 'Bez popisu').replace(/\s+/g, ' ');
     const dueDateText = formatDate(homework.dueDate);
@@ -47,24 +46,4 @@ function buildHomeworksQueryString(homeworks, generatedAt) {
   lines.push(`homeworks_updated=${encodeURIComponent(formatDate(generatedAt))}`);
 
   return lines.join('&');
-}
-
-function getDeadlineIndicator(referenceDate, dueDate) {
-  const startOfReferenceDay = startOfUtcDay(referenceDate);
-  const startOfDueDay = startOfUtcDay(dueDate);
-  const diffInDays = Math.round((startOfDueDay - startOfReferenceDay) / (24 * 60 * 60 * 1000));
-
-  if (diffInDays <= 0) {
-    return 'dnes';
-  }
-
-  if (diffInDays === 1) {
-    return 'zítra';
-  }
-
-  return 'později';
-}
-
-function startOfUtcDay(date) {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
