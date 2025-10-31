@@ -1,60 +1,97 @@
-# Description
+# Synchronizační skripty pro Živý Obraz
 
-This is the JavaScript code that synchronises 'Živý Obraz' with the Golemio API (the public transport API in Prague).
+Tento projekt obsahuje JavaScriptové skripty pro synchronizaci dat mezi různými API a platformou Živý Obraz.
 
-The code fetches data from the Golemio API and imports it to 'Živý Obraz' via the API.
+## Popis
 
-Synchronisation is achieved via the workflow `.github/workflows/traffic-sync.yml`.
+### Traffic Sync (Golemio ⇄ Živý Obraz)
 
-This workflow is dispatched by a cron job every 10 minutes to run a script that fetches data for a specific stop ID.
+- **Účel:** Synchronizace dat o veřejné dopravě z Golemio API do Živého Obrazu.
+- **Workflow:** `.github/workflows/traffic-sync.yml`
+- **Spouštění:** Každých 10 minut pomocí cron jobu.
+- **Skript:** `src/traffic-sync.mjs`
 
-## Initialisation
+### Marks Sync (Bakaláři ⇄ Živý Obraz)
 
-```bash
-npm install
-```
+- **Účel:** Synchronizace známek z Bakalářů do Živého Obrazu.
+- **Workflow:** `.github/workflows/marks-sync.yml`
+- **Spouštění:** Denně v 6:00 pomocí cron jobu.
+- **Skript:** `src/marks-sync.mjs`
 
-Set environment secrets:
-Settings -> Secrets and variables -> Actions -> New repository secret
+### Homeworks Sync (Bakaláři ⇄ Živý Obraz)
 
-- `GOLEMIO_TOKEN` - [Golemio API token](https://api.golemio.cz/docs/openapi/)
-- `ZIVY_OBRAZ_IMPORT_KEY` - [Živý obraz](https://zivyobraz.eu/?page=muj-ucet&hodnoty=1) import key
-- `BAKALARI_BASE_URL` - Bakaláři instance base URL (e.g. `https://bakalari.gpisnicka.cz/bakaweb`)
-- `BAKALARI_USERNAME` - Bakaláři username used for API login
-- `BAKALARI_PASSWORD` - Bakaláři password used for API login
+- **Účel:** Synchronizace domácích úkolů z Bakalářů do Živého Obrazu.
+- **Skript:** `src/homeworks-sync.mjs`
 
-To run the script locally, set the environment variables in your shell:
+### Events Sync (Bakaláři ⇄ Živý Obraz)
 
+- **Účel:** Synchronizace plánovaných testů a školních akcí z Bakalářů do Živého Obrazu.
+- **Skript:** `src/events-sync.mjs`
+
+### Proverb Sync (Statické přísloví ⇄ Živý Obraz)
+
+- **Účel:** Odesílání náhodného přísloví do Živého Obrazu.
+- **Workflow:** `.github/workflows/proverb-sync.yml`
+- **Spouštění:** Denně v 6:00 pomocí cron jobu.
+- **Skript:** `src/proverb-sync.mjs`
+
+---
+
+## Požadavky
+
+- **Node.js:** Verze 20
+- **Balíčky:** Nainstalujte pomocí `npm install`
+
+---
+
+## Nastavení
+
+### Prostředí
+
+Nastavte následující tajné klíče v GitHub repozitáři (Settings > Secrets and variables > Actions):
+
+1. **GitHub Actions:**
+    - `GOLEMIO_TOKEN` - [Golemio API token](https://api.golemio.cz/docs/openapi/)
+    - `GOLEMIO_STOP_ID` - ID zastávky pro sledování (např. ``)
+    - `ZIVY_OBRAZ_IMPORT_KEY` - [Živý Obraz import key](https://zivyobraz.eu/?page=muj-ucet&hodnoty=1)
+    - `BAKALARI_BASE_URL` - URL instance Bakalářů (např. `https://bakalari.gpisnicka.cz/bakaweb`)
+    - `BAKALARI_USERNAME` - Uživatelské jméno pro API Bakalářů
+    - `BAKALARI_PASSWORD` - Heslo pro API Bakalářů
+
+### Lokální spuštění
+
+Nastavte proměnné prostředí ve vašem shellu:
 ```shell
-export TOKEN=<token>
-export IMPORT_KEY=<import_key>
+export TOKEN=<GOLEMIO_TOKEN>
+export IMPORT_KEY=<ZIVY_OBRAZ_IMPORT_KEY>
 export BAKALARI_BASE_URL=<https://your-bakalari-instance/bakaweb>
 export BAKALARI_USERNAME=<username>
 export BAKALARI_PASSWORD=<password>
 ```
 
-## Simple start
+---
 
-The first argument is the stop ID.
+## Spuštění skriptů
 
-```bash
-  node src/traffic-sync.mjs U1330Z1
+Pro spuštění jednotlivých skriptů lokálně použijte následující příkazy:
+
+```shell
+npm install
+
+node src/traffic-sync.mjs
+node src/marks-sync.mjs
+node src/homeworks-sync.mjs
+node src/events-sync.mjs
+node src/proverb-sync.mjs
 ```
 
-To synchronise grades from Bakaláři, run:
+---
 
-```bash
-  node src/marks-sync.mjs
-```
+## Linky
 
-To synchronise homework deadlines from Bakaláři, run:
+- [Golemio API dokumentace](https://api.golemio.cz/docs/openapi/)
+- [Živý Obraz - Můj účet](https://zivyobraz.eu)
+- [Bakaláři API dokumentace](https://api.bakalari.cz/docs/)
+- [Bakaláři API endpoints](https://github.com/bakalari-api/bakalari-api-v3/blob/master/endpoints.md)
 
-```bash
-  node src/homeworks-sync.mjs
-```
 
-To synchronise planned tests and school events from Bakaláři, run:
-
-```bash
-  node src/events-sync.mjs
-```
