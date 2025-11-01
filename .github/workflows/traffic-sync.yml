@@ -16,9 +16,7 @@ jobs:
     timeout-minutes: 3
 
     env:
-      STOP_ID: ${{ secrets.GOLEMIO_STOP_ID }}
-      TOKEN: ${{ secrets.GOLEMIO_TOKEN }}
-      IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
+      DEPARTURE_PREFIX: ''
 
     steps:
       - uses: actions/checkout@v4
@@ -38,4 +36,12 @@ jobs:
 
       - name: Run traffic-sync
         run: |
-          node src/traffic-sync.mjs "$STOP_ID"
+          ARGS=(
+            --stop-id="${{ secrets.GOLEMIO_STOP_ID }}"
+            --import-key="${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}"
+            --golemio-token="${{ secrets.GOLEMIO_TOKEN }}"
+          )
+          if [ -n "${DEPARTURE_PREFIX}" ]; then
+            ARGS+=(--departure-prefix="${DEPARTURE_PREFIX}")
+          fi
+          node src/traffic-sync.mjs "${ARGS[@]}"

@@ -1,7 +1,51 @@
+import { parseArgs } from 'node:util';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { fetchEvents } from './utils/bakalari.mjs';
-import { uploadData } from './utils/upload.mjs';
+import { createBakalariClient } from './utils/bakalari.mjs';
+import { createUploader } from './utils/upload.mjs';
 import { describeRelativeDay, formatDate, formatTime, startOfUtcDay } from './utils/util.mjs';
+
+const { values, positionals } = parseArgs({
+  options: {
+    'bakalari-base-url': { type: 'string' },
+    'bakalari-username': { type: 'string' },
+    'bakalari-password': { type: 'string' },
+    'import-key': { type: 'string' },
+    'events-line-prefix': { type: 'string' },
+    'events-updated-param': { type: 'string' }
+  },
+  allowPositionals: true
+});
+
+function resolveValue(name, index) {
+  return values[name] ?? positionals[index];
+}
+
+function resolveWithDefault(name, index, fallback) {
+  const candidate = resolveValue(name, index);
+  return typeof candidate === 'string' && candidate.trim() ? candidate.trim() : fallback;
+}
+
+const bakalariBaseUrl = resolveValue('bakalari-base-url', 0);
+const bakalariUsername = resolveValue('bakalari-username', 1);
+const bakalariPassword = resolveValue('bakalari-password', 2);
+const importKey = resolveValue('import-key', 3);
+
+if (!bakalariBaseUrl || !bakalariUsername || !bakalariPassword || !importKey) {
+  throw new Error(
+    'Usage: node src/events-sync.mjs <bakalariBaseUrl> <username> <password> <importKey> [linePrefix] [updatedParam]'
+  );
+}
+
+const eventsLinePrefix = resolveWithDefault('events-line-prefix', 4, 'events_line');
+const eventsUpdatedParam = resolveWithDefault('events-updated-param', 5, 'events_updated');
+
+const { fetchEvents } = createBakalariClient({
+  baseUrl: bakalariBaseUrl,
+  username: bakalariUsername,
+  password: bakalariPassword
+});
+
+const uploadData = createUploader(importKey);
 
 const now = new Date();
 const fromDate = startOfUtcDay(now);
@@ -9,14 +53,12 @@ const toDate = new Date(fromDate);
 toDate.setMonth(toDate.getMonth() + 1);
 
 console.log(
-  `Starting: events sync, from ${fromDate.toISOString().split('T')[0]} to ${toDate
-    .toISOString()
-    .split('T')[0]}`
+  `Starting: events sync, from ${fromDate.toISOString().split('T')[0]} to ${toDate.toISOString().split('T')[0]}`
 );
 
 fetchEvents(fromDate, toDate)
   .pipe(
-    map(events => buildEventsQueryString(events, now)),
+    map(events => buildEventsQueryString(events, now, eventsLinePrefix, eventsUpdatedParam)),
     tap(queryString => console.log(`Prepared query string: ${queryString}`)),
     switchMap(queryString => uploadData(queryString)),
     tap(response => console.log('Upload response:', response))
@@ -26,21 +68,21 @@ fetchEvents(fromDate, toDate)
     error: error => console.error('Error occurred during events sync:', error)
   });
 
-function buildEventsQueryString(events, generatedAt) {
+function buildEventsQueryString(events, generatedAt, linePrefix, updatedParam) {
   if (!Array.isArray(events) || events.length === 0) {
     return [
-      `events_line_1=${encodeURIComponent('Žádné plánované zkoušky ani akce.')}`,
-      `events_updated=${encodeURIComponent(formatDate(generatedAt))}`
+      `${linePrefix}_1=${encodeURIComponent('Žádné plánované zkoušky ani akce.')}`,
+      `${updatedParam}=${encodeURIComponent(formatDate(generatedAt))}`
     ].join('&');
   }
 
   const lines = events.slice(0, 10).map((event, index) => {
     const indicator = describeRelativeDay(generatedAt, event.startDate);
     const line = formatEventLine(event, indicator);
-    return `events_line_${index + 1}=${encodeURIComponent(line)}`;
+    return `${linePrefix}_${index + 1}=${encodeURIComponent(line)}`;
   });
 
-  lines.push(`events_updated=${encodeURIComponent(formatDate(generatedAt))}`);
+  lines.push(`${updatedParam}=${encodeURIComponent(formatDate(generatedAt))}`);
 
   return lines.join('&');
 }
