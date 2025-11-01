@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 3
 
     env:
-      IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
+      WRAP_LENGTH: '0'
 
     steps:
       - uses: actions/checkout@v4
@@ -36,4 +36,6 @@ jobs:
 
       - name: Run traffic-sync
         run: |
-          node src/proverb-sync.mjs
+          node src/proverb-sync.mjs \
+            --import-key="${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}" \
+            --wrap-length="${WRAP_LENGTH}"

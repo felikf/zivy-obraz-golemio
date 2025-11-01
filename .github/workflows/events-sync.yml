@@ -16,10 +16,8 @@ jobs:
     timeout-minutes: 3
 
     env:
-      BAKALARI_BASE_URL: ${{ secrets.BAKALARI_BASE_URL }}
-      BAKALARI_USERNAME: ${{ secrets.BAKALARI_USERNAME }}
-      BAKALARI_PASSWORD: ${{ secrets.BAKALARI_PASSWORD }}
-      IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
+      EVENTS_LINE_PREFIX: events_line
+      EVENTS_UPDATED_PARAM: events_updated
 
     steps:
       - uses: actions/checkout@v4
@@ -39,4 +37,10 @@ jobs:
 
       - name: Run events-sync
         run: |
-          node src/events-sync.mjs
+          node src/events-sync.mjs \
+            --bakalari-base-url="${{ secrets.BAKALARI_BASE_URL }}" \
+            --bakalari-username="${{ secrets.BAKALARI_USERNAME }}" \
+            --bakalari-password="${{ secrets.BAKALARI_PASSWORD }}" \
+            --import-key="${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}" \
+            --events-line-prefix="${EVENTS_LINE_PREFIX}" \
+            --events-updated-param="${EVENTS_UPDATED_PARAM}"

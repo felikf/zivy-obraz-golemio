@@ -2,32 +2,43 @@ import axios from 'axios';
 import { from, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { formatDate, formatTime, getGolemioToken } from './util.mjs';
+import { formatDate, formatTime } from './util.mjs';
 
 const DEPARTURE_URL =
   'http://api.golemio.cz/v2/pid/departureboards?ids=PLATFORM_PLACEHOLDER&total=5&preferredTimezone=Europe%2FPrague&minutesBefore=MINUTES_BEFORE_PLACEHOLDER';
-
-const OPTIONS = {
-  headers: {
-    accept: 'application/json; charset=utf-8',
-    'x-access-token': getGolemioToken()
-  }
-};
 
 function prepareUrl(platform, minutesBefore) {
   return DEPARTURE_URL.replace('PLATFORM_PLACEHOLDER', platform).replace('MINUTES_BEFORE_PLACEHOLDER', minutesBefore);
 }
 
+function createOptions(token) {
+  if (typeof token !== 'string' || !token.trim()) {
+    throw new Error('Missing Golemio API token.');
+  }
+
+  return {
+    headers: {
+      accept: 'application/json; charset=utf-8',
+      'x-access-token': token.trim()
+    }
+  };
+}
+
 // Function to fetch departure data
-export const fetchDepartureData = (platform, minutesBefore) => {
-  let url = prepareUrl(platform, minutesBefore);
-  return from(axios.get(url, OPTIONS)).pipe(
-    map(
-      response =>
-        `${mapDepartureData(response.data, platform)}&fetchedTimestamp=${encodeURIComponent(formatDate(new Date()))}`
-    ),
-    tap(queryString => console.log(`Fetched data: queryString: ${queryString}`))
-  );
+export const createDepartureFetcher = token => {
+  const options = createOptions(token);
+
+  return (platform, minutesBefore, prefixOverride) => {
+    const url = prepareUrl(platform, minutesBefore);
+    const prefix = prefixOverride ?? platform;
+    return from(axios.get(url, options)).pipe(
+      map(
+        response =>
+          `${mapDepartureData(response.data, prefix)}&fetchedTimestamp=${encodeURIComponent(formatDate(new Date()))}`
+      ),
+      tap(queryString => console.log(`Fetched data: queryString: ${queryString}`))
+    );
+  };
 };
 
 function mapOneDeparture(departure) {

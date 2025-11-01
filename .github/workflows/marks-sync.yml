@@ -16,10 +16,9 @@ jobs:
     timeout-minutes: 3
 
     env:
-      BAKALARI_BASE_URL: ${{ secrets.BAKALARI_BASE_URL }}
-      BAKALARI_USERNAME: ${{ secrets.BAKALARI_USERNAME }}
-      BAKALARI_PASSWORD: ${{ secrets.BAKALARI_PASSWORD }}
-      IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
+      GRADES_LINE_PREFIX: grades_line
+      GRADES_UPDATED_PARAM: grades_updated
+      GRADES_TABLE_PARAM: grades_line
 
     steps:
       - uses: actions/checkout@v4
@@ -39,4 +38,11 @@ jobs:
 
       - name: Run marks-sync
         run: |
-          node src/marks-sync.mjs
+          node src/marks-sync.mjs \
+            --bakalari-base-url="${{ secrets.BAKALARI_BASE_URL }}" \
+            --bakalari-username="${{ secrets.BAKALARI_USERNAME }}" \
+            --bakalari-password="${{ secrets.BAKALARI_PASSWORD }}" \
+            --import-key="${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}" \
+            --grades-line-prefix="${GRADES_LINE_PREFIX}" \
+            --grades-updated-param="${GRADES_UPDATED_PARAM}" \
+            --grades-table-param="${GRADES_TABLE_PARAM}"

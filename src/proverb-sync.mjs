@@ -1,9 +1,27 @@
+import { parseArgs } from 'node:util';
 import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { getRandomProverb } from './utils/proverb.mjs';
-import { uploadData } from './utils/upload.mjs';
+import { createUploader } from './utils/upload.mjs';
 
-const wrapLength = parseInt(process.argv[2]) || 0;
+const { values, positionals } = parseArgs({
+  options: {
+    'import-key': { type: 'string' },
+    'wrap-length': { type: 'string' }
+  },
+  allowPositionals: true
+});
+
+const importKey = values['import-key'] ?? positionals[0];
+const wrapLengthRaw = values['wrap-length'] ?? positionals[1];
+
+if (!importKey) {
+  throw new Error('Usage: node src/proverb-sync.mjs <importKey> [wrapLength]');
+}
+
+const wrapLength = Number.parseInt(wrapLengthRaw, 10) || 0;
+
+const uploadData = createUploader(importKey);
 
 console.log(`Starting: proverb sync, wrap length: ${wrapLength}`);
 

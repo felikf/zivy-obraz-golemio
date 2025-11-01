@@ -16,10 +16,8 @@ jobs:
     timeout-minutes: 3
 
     env:
-      IMPORT_KEY: ${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}
-      BAKALARI_BASE_URL: ${{ secrets.BAKALARI_BASE_URL }}
-      BAKALARI_USERNAME: ${{ secrets.BAKALARI_USERNAME }}
-      BAKALARI_PASSWORD: ${{ secrets.BAKALARI_PASSWORD }}
+      HOMEWORKS_LINE_PREFIX: homeworks_line
+      HOMEWORKS_UPDATED_PARAM: homeworks_updated
 
     steps:
       - uses: actions/checkout@v4
@@ -39,4 +37,10 @@ jobs:
 
       - name: Run homeworks-sync
         run: |
-          node src/homeworks-sync.mjs
+          node src/homeworks-sync.mjs \
+            --bakalari-base-url="${{ secrets.BAKALARI_BASE_URL }}" \
+            --bakalari-username="${{ secrets.BAKALARI_USERNAME }}" \
+            --bakalari-password="${{ secrets.BAKALARI_PASSWORD }}" \
+            --import-key="${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}" \
+            --homeworks-line-prefix="${HOMEWORKS_LINE_PREFIX}" \
+            --homeworks-updated-param="${HOMEWORKS_UPDATED_PARAM}"
