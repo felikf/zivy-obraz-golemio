@@ -39,10 +39,3 @@ export function describeRelativeDay(referenceDate, targetDate) {
   return `za ${diffInDays} ${suffix}`;
 }
 
-export function getGolemioToken() {
-  return process.env.TOKEN;
-}
-
-export function getLiveScreenImportKey() {
-  return process.env.IMPORT_KEY;
-}
