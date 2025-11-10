@@ -111,11 +111,14 @@ function extractHomeworkDueDate(homework) {
     homework?.DueDate ??
     homework?.Deadline ??
     homework?.Due ??
+    homework?.DateEnd ??
     homework?.Date ??
     homework?.Created ??
-    homework?.CreatedDate;
+    homework?.CreatedDate ??
+    homework?.DateStart;
 
   if (!dateString) {
+    console.info('No due date found in homework:', homework);
     return null;
   }
 
