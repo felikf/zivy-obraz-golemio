@@ -42,6 +42,12 @@ Tento projekt obsahuje JavaScriptové skripty pro synchronizaci dat mezi různý
 - **Spouštění:** Automaticky denně ve 4:00 (cron: `0 6 * * *`) nebo ručně přes GitHub Actions.
 - **Skript:** `src/events-sync.mjs`
 
+### Timetable Sync (Bakaláři ⇄ Živý Obraz)
+- **Účel:** Synchronizace denního rozvrhu (včetně vyjmutých hodin) do Živého Obrazu v podobě ASCII artu.
+- **Workflow:** `\.github/workflows/timetable-sync.yml`
+- **Spouštění:** Automaticky každých 10 minut (cron: `*/10 * * * *`) nebo ručně přes GitHub Actions.
+- **Skript:** `src/timetable-sync.mjs`
+
 ### Proverb Sync (Statické přísloví ⇄ Živý Obraz)
 - **Účel:** Odesílání náhodného přísloví do Živého Obrazu.
 - **Workflow:** `\.github/workflows/proverb-sync.yml`
@@ -95,6 +101,7 @@ node src/traffic-sync.mjs
 node src/marks-sync.mjs
 node src/homeworks-sync.mjs
 node src/events-sync.mjs
+node src/timetable-sync.mjs
 node src/proverb-sync.mjs
 ```
 
