@@ -1,0 +1,40 @@
+name: Timetable sync (Bakaláři ⇄ Živý obraz)
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    concurrency:
+      group: timetable-sync
+      cancel-in-progress: false
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+
+      - name: Install dependencies (if any)
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+          fi
+
+      - name: Run timetable-sync
+        run: |
+          node src/timetable-sync.mjs \
+            --bakalari-base-url="${{ secrets.BAKALARI_BASE_URL }}" \
+            --bakalari-username="${{ secrets.BAKALARI_USERNAME }}" \
+            --bakalari-password="${{ secrets.BAKALARI_PASSWORD }}" \
+            --import-key="${{ secrets.ZIVY_OBRAZ_IMPORT_KEY }}"
